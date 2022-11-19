@@ -8,21 +8,25 @@ While the Demo is a fully contained, runnable project, it's core function is to 
 is possible with the [HexCell](Scripts/HexCell.gd) script itself.
 
 *HexCell* is a self contained class for the manipulation of coordinates within a 2D
-Hexigonal grid-space.
+Hexigonal grid-space and if heavily based off information on [hexigonal grids by Red Blob Games](https://www.redblobgames.com/grids/hexagons/)
 
 Where a Vector3 is composed of the coordinates (X,Y,Z), a Hexigonal coordinate used in
 HexCell is composed of the coordinates (Q, R, S) with a very special rule that Q+R+S = 0
 Internally HexCell stores its QRS coordinates in a Vector3i where Q=X, R=Z, S=Y
 
 Hexigonal coordinates can have one of two orientations.
-Pointy [default]
+
+**Pointy** *[default]*
+
 ![Pointy end Up](images/Hex_Pointy_Orientation.svg)
 
-Flat
+**Flat**
+
 ![Top if Flat](images/Hex_Flat_Orientation.svg)
 
+
 ### Adding *HexCell* To a Project
-To add HexCell to a project simply copy this script somewhere under the project's resource folder.
+To add HexCell to a project simply copy the [HexCell.gd](Scripts/HexCell.gd) script somewhere under the project's resource folder.
 Once added to the project, a HexCell can be created with
 ```
 HexCell.new()
