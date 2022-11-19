@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="256"
+   height="256"
+   viewBox="0 0 67.733332 67.733333"
+   version="1.1"
+   id="svg5"
+   sodipodi:docname="Hex_Flat_Orientation.svg"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:zoom="2.2601823"
+     inkscape:cx="105.30124"
+     inkscape:cy="141.13906"
+     inkscape:window-width="1916"
+     inkscape:window-height="1033"
+     inkscape:window-x="1920"
+     inkscape:window-y="18"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       sodipodi:type="star"
+       style="fill:#58584e;fill-opacity:1;stroke:#6dd0ff;stroke-width:0.987308;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"
+       id="path234"
+       inkscape:flatsided="true"
+       sodipodi:sides="6"
+       sodipodi:cx="12.010915"
+       sodipodi:cy="12.368095"
+       sodipodi:r1="22.075724"
+       sodipodi:r2="19.118137"
+       sodipodi:arg1="-0.5193262"
+       sodipodi:arg2="0.0042725725"
+       inkscape:rounded="1.7347235e-17"
+       inkscape:randomized="0"
+       d="M 31.176038,1.4120178 31.081718,23.48754 11.916595,34.443618 -7.1542081,23.324173 -7.0598882,1.2486509 12.105235,-9.7074268 Z"
+       transform="matrix(0.01000621,1.7256534,-1.4981462,0.00868701,52.275697,13.032548)" />
+    <text
+       xml:space="preserve"
+       style="font-size:11.2889px;line-height:1.25;font-family:'OpenDyslexicAlta Nerd Font';-inkscape-font-specification:'OpenDyslexicAlta Nerd Font';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="29.692001"
+       y="10.151165"
+       id="text2404"><tspan
+         sodipodi:role="line"
+         id="tspan2402"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2889px;font-family:'RobotoMono Nerd Font';-inkscape-font-specification:'RobotoMono Nerd Font';fill:#e500ff;fill-opacity:1;stroke-width:0.264583"
+         x="29.692001"
+         y="10.151165">Q</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:11.2889px;line-height:1.25;font-family:'OpenDyslexicAlta Nerd Font';-inkscape-font-specification:'OpenDyslexicAlta Nerd Font';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="51.022785"
+       y="49.914349"
+       id="text3910"><tspan
+         sodipodi:role="line"
+         id="tspan3908"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2889px;font-family:'RobotoMono Nerd Font';-inkscape-font-specification:'RobotoMono Nerd Font';fill:#e500ff;fill-opacity:1;stroke-width:0.264583"
+         x="51.022785"
+         y="49.914349">R</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:11.2889px;line-height:1.25;font-family:'OpenDyslexicAlta Nerd Font';-inkscape-font-specification:'OpenDyslexicAlta Nerd Font';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="10.180176"
+       y="49.59927"
+       id="text3914"><tspan
+         sodipodi:role="line"
+         id="tspan3912"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2889px;font-family:'RobotoMono Nerd Font';-inkscape-font-specification:'RobotoMono Nerd Font';fill:#e500ff;fill-opacity:1;stroke-width:0.264583"
+         x="10.180176"
+         y="49.59927">S</tspan></text>
+  </g>
+</svg>
