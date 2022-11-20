@@ -1,0 +1,75 @@
+[gd_scene load_steps=2 format=3 uid="uid://cqli885hsftoy"]
+
+[ext_resource type="Script" path="res://UI/Main/RegionControls/RegionControls.gd" id="1_l383k"]
+
+[node name="RegionControls" type="VBoxContainer"]
+offset_right = 317.0
+offset_bottom = 205.0
+script = ExtResource("1_l383k")
+
+[node name="Label" type="Label" parent="."]
+offset_right = 317.0
+offset_bottom = 78.0
+text = "This tool will place a region grid centered around the current cursor. Only one region at a time for simplicity."
+autowrap_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="."]
+offset_top = 82.0
+offset_right = 317.0
+offset_bottom = 112.0
+size_flags_vertical = 3
+
+[node name="RegionRadius" type="VBoxContainer" parent="."]
+offset_top = 116.0
+offset_right = 317.0
+offset_bottom = 162.0
+
+[node name="SLabel" type="HBoxContainer" parent="RegionRadius"]
+offset_right = 317.0
+offset_bottom = 26.0
+
+[node name="Label" type="Label" parent="RegionRadius/SLabel"]
+offset_right = 57.0
+offset_bottom = 26.0
+text = "Radius:"
+
+[node name="Value" type="Label" parent="RegionRadius/SLabel"]
+offset_left = 61.0
+offset_right = 71.0
+offset_bottom = 26.0
+theme_override_colors/font_color = Color(0.686275, 0.905882, 0.694118, 1)
+text = "1"
+
+[node name="HSlider" type="HSlider" parent="RegionRadius"]
+offset_top = 30.0
+offset_right = 317.0
+offset_bottom = 46.0
+min_value = 1.0
+max_value = 15.0
+value = 1.0
+
+[node name="HSeparator2" type="HSeparator" parent="."]
+offset_top = 166.0
+offset_right = 317.0
+offset_bottom = 170.0
+
+[node name="Buttons" type="HBoxContainer" parent="."]
+offset_top = 174.0
+offset_right = 317.0
+offset_bottom = 205.0
+
+[node name="Create" type="Button" parent="Buttons"]
+offset_right = 60.0
+offset_bottom = 31.0
+text = "Create"
+
+[node name="Clear" type="Button" parent="Buttons"]
+offset_left = 64.0
+offset_right = 113.0
+offset_bottom = 31.0
+text = "Clear
+"
+
+[connection signal="value_changed" from="RegionRadius/HSlider" to="." method="_on_RegionRadius_value_changed"]
+[connection signal="pressed" from="Buttons/Create" to="." method="_on_create_pressed"]
+[connection signal="pressed" from="Buttons/Clear" to="." method="_on_clear_pressed"]

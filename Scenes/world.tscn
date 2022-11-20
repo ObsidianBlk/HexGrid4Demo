@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://bisnsa8jnw043"]
+[gd_scene load_steps=4 format=3 uid="uid://bisnsa8jnw043"]
 
 [ext_resource type="Script" path="res://Scripts/HexGrid.gd" id="1_5x6s4"]
 [ext_resource type="Script" path="res://Scenes/world.gd" id="1_f161h"]
+[ext_resource type="PackedScene" uid="uid://pi4ccif0y2d6" path="res://UI/Main/main.tscn" id="3_3ca3q"]
 
 [node name="World" type="Node2D"]
 script = ExtResource("1_f161h")
@@ -15,3 +16,9 @@ target_camera_path = NodePath("../Camera2D")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Main" parent="UI" instance=ExtResource("3_3ca3q")]
+
+[connection signal="operation_requested" from="UI/Main" to="." method="_on_main_operation_requested"]

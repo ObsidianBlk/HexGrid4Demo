@@ -16,7 +16,7 @@ var _dir_br : Vector2 = Vector2.ZERO
 # Onready Variables
 # --------------------------------------------------------------------------------------------------
 @onready var camera_node : Camera2D = $Camera2D
-
+@onready var hexgrid : HexGrid = $HexGrid
 
 # --------------------------------------------------------------------------------------------------
 # Override Methods
@@ -47,3 +47,19 @@ func _physics_process(delta : float) -> void:
 	if dir.length_squared() > 0.1:
 		camera_node.global_position += dir * CAMERA_SPEED * delta
 
+# --------------------------------------------------------------------------------------------------
+# Handler Methods
+# --------------------------------------------------------------------------------------------------
+
+func _on_main_operation_requested(req : Dictionary) -> void:
+	if "op" in req:
+		match req["op"]:
+			"region_create":
+				if "r" in req and typeof(req["r"]) == TYPE_INT and req["r"] > 0:
+					var origin : HexCell = hexgrid.get_origin()
+					if not hexgrid.has_highlight_region("demo_region"):
+						hexgrid.add_highlight_region("demo_region", origin.get_region(req["r"]), Color.TOMATO)
+					else:
+						hexgrid.change_highlight_region_cells("demo_region", origin.get_region(req["r"]))
+			"region_remove":
+				hexgrid.remove_highlight_region("demo_region")

@@ -267,6 +267,9 @@ func remove_highlight_region(region_name : StringName) -> void:
 		region_removed.emit(region_name)
 		#queue_redraw()
 
+func has_highlight_region(region_name : StringName) -> bool:
+	return region_name in _highlight_regions
+
 func change_highlight_region_cells(region_name : StringName, cells : Array) -> void:
 	if region_name in _highlight_regions:
 		_highlight_regions[region_name][HR_CELLS] = cells
