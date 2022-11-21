@@ -21,18 +21,16 @@ class Edge:
 			to = a
 	
 	func draw(surf : CanvasItem, offset : Vector2, color : Color, width : float = 1.0) -> void:
-		var cframe : int = Engine.get_process_frames()
-		if cframe == _last_draw_frame:
-			return # We've already been drawn!
-		_last_draw_frame = cframe
 		surf.draw_line(from + offset, to + offset, color, width)
 	
 	func add_owner(cell : HexCell) -> void:
 		if not cell.qrs in owners:
 			owners[cell.qrs] = cell
 	
-	func get_name() -> String:
-		return "%s<>%s"%[from, to]
+	func eq(e) -> bool:
+		if from.distance_squared_to(e.from) < 0.1 and to.distance_squared_to(e.to):
+			return true
+		return false
 
 
 # ------------------------------------------------------------------------------
@@ -74,7 +72,10 @@ const RAD_60 : float = deg_to_rad(60.0)
 var _grid_origin : HexCell = HexCell.new()
 var _highlight_regions : Dictionary = {}
 var _active_cells : Dictionary = {}
-var _grid_data : Dictionary = {}
+var _grid_data : Dictionary = {
+	"cells": {},
+	"edges": []
+}
 
 var _target_camera : WeakRef = weakref(null)
 
@@ -159,7 +160,7 @@ func _ready() -> void:
 
 func _draw() -> void:
 	var offset = _grid_origin.to_point() * cell_size
-	for e in _grid_data.values():
+	for e in _grid_data.edges:
 		var color : Color = base_grid_color
 		var region_name : StringName = _GetEdgeDominantRegion(e)
 		if region_name != &"":
@@ -167,13 +168,6 @@ func _draw() -> void:
 			e.draw(self, offset, color)
 		elif enable_base_grid:
 			e.draw(self, offset, color)
-#	for item in _grid_data:
-#		var color : Color = base_grid_color
-#		if item[1] != &"":
-#			color = _highlight_regions[item[1]][HR_COLOR]
-#		if grid_color_edge_alpha < 1.0:
-#			color.a = lerp(1.0, grid_color_edge_alpha, item[2] / base_grid_range)
-#		draw_polyline(item[0], color, 1.0, true)
 	
 	if enable_focus_dot:
 		var target = _target_camera.get_ref()
@@ -235,94 +229,80 @@ func _DeactivateCellRegion(cell : HexCell, region_name : StringName, priority : 
 
 func _GetEdgeDominantRegion(e : Edge) -> StringName:
 	var owners : Array = e.owners.values()
-	var highest_cell : HexCell = HexCell.new()
+	var highest_qrs : Vector3i = Vector3i.ZERO
 	var highest_priority : int = -1
 	for cell in owners:
-		var ocell : HexCell = HexCell.new(cell.qrs + _grid_origin.qrs, false, cell_orientation)
-		var priority = _GetCellPriority(ocell)
+		#var ocell : HexCell = HexCell.new(cell.qrs + _grid_origin.qrs, false, cell_orientation)
+		var qrs : Vector3i = cell.qrs + _grid_origin.qrs
+		var priority = _GetCellPriority(qrs)
 		if priority > highest_priority:
 			highest_priority = priority
-			highest_cell = ocell
+			highest_qrs = qrs
 	if highest_priority >= 0:
-		return _active_cells[highest_cell.qrs][highest_priority][0]
+		return _active_cells[highest_qrs][highest_priority][0]
 	return &""
 
 
-func _GetCellPriority(cell : HexCell) -> int:
-	if cell.qrs in _active_cells:
-		var priorities : Array = _active_cells[cell.qrs].keys()
+func _GetCellPriority(qrs : Vector3i) -> int:
+	if qrs in _active_cells:
+		var priorities : Array = _active_cells[qrs].keys()
 		priorities.sort()
 		return priorities[priorities.size() - 1]
 	return -1
 
 
 func _GetCellActiveRegion(cell : HexCell) -> StringName:
-	var priority = _GetCellPriority(cell)
+	var priority = _GetCellPriority(cell.qrs)
 	if priority >= 0:
 		return _active_cells[cell.qrs][priority][0]
 	return &""
 
 
+func _AddCellToGrid(cell : HexCell) -> void:
+	if not cell.qrs in _grid_data.cells:
+		_grid_data.cells[cell.qrs] = [null, null, null, null, null, null]
+
 func _BuildGridData() -> void:
-	_grid_data.clear()
+	_grid_data.edges.clear()
 	var origin : HexCell = HexCell.new(null, false, cell_orientation)
-	for cell in origin.get_region(base_grid_range):
+	var region : Array = origin.get_region(base_grid_range)
+	for cell in region:
 		_HexToGridData(cell)
+	_grid_data.cells.clear()
 	queue_redraw()
 
-func _StoreEdgeOwner(cell : HexCell, from : Vector2, to : Vector2) -> void:
+func _StoreEdge(cell : HexCell, eid : int, from : Vector2, to : Vector2) -> void:
 	var e : Edge = Edge.new(from, to)
-	var edge_name : String = e.get_name()
-	if not edge_name in _grid_data:
-		_grid_data[edge_name] = e
-	_grid_data[edge_name].add_owner(cell)
+	var eidx : int = -1
+	if _grid_data.cells[cell.qrs][eid] == null:
+		eidx = _grid_data.edges.size()
+		_grid_data.cells[cell.qrs][eid] = eidx
+		_grid_data.edges.append(e)
+		e.add_owner(cell)
+	else:
+		eidx = _grid_data.cells[cell.qrs][eid]
+	
+	var ncell : HexCell = cell.get_neighbor(eid)
+	_AddCellToGrid(ncell)
+	var neid : int = (eid + 3) % 6
+	if _grid_data.cells[ncell.qrs][neid] == null:
+		_grid_data.cells[ncell.qrs][neid] = eidx
+		_grid_data.edges[eidx].add_owner(ncell)
 
 func _HexToGridData(cell : HexCell) -> void:
+	_AddCellToGrid(cell)
 	var pos : Vector2 = cell.to_point()
 	var offset : Vector2 = pos * cell_size
-	if cell.qrs == Vector3i.ZERO:
-		print("Here we begin!")
+	var eid : int = 4 if cell.orientation == HexCell.ORIENTATION.Pointy else 2 # It is known... lol
 	var point : Vector2 = Vector2(0, -cell_size) if cell.orientation == HexCell.ORIENTATION.Pointy else Vector2(-cell_size, 0)
 	var last_point : Vector2 = point + offset
 	for i in range(1, 6):
 		var rad = RAD_60 * i
 		var npoint : Vector2 = point.rotated(rad) + offset
-		_StoreEdgeOwner(cell, last_point, npoint)
+		_StoreEdge(cell, eid, last_point, npoint)
+		eid = (eid + 1) % 6
 		last_point = npoint
-	_StoreEdgeOwner(cell, last_point, point + offset)
-
-#func _BuildGridData() -> void:
-#	_grid_data.clear()
-#	var region_cells : Dictionary = {}
-#	for cell in _grid_origin.get_region(base_grid_range):
-#		var hr : StringName = _GetCellHighlightRegion(cell)
-#		if hr != &"":
-#			if not hr in region_cells:
-#				region_cells[hr] = []
-#			region_cells[hr].append(cell)
-#		elif enable_base_grid:
-#			_grid_data.append([_HexToPackedArray(cell, cell_size), &"", _grid_origin.distance_to(cell)])
-#	if not region_cells.is_empty():
-#		var keys : Array = region_cells.keys()
-#		keys.sort_custom(func(a : StringName, b : StringName):
-#			return _highlight_regions[a][HR_PRIORITY] < _highlight_regions[b][HR_PRIORITY]
-#		)
-#		for key in keys:
-#			for cell in region_cells[key]:
-#				_grid_data.append([_HexToPackedArray(cell, cell_size), key, _grid_origin.distance_to(cell)])
-#	queue_redraw()
-
-#func _HexToPackedArray(cell : HexCell, size : float) -> PackedVector2Array:
-#	var pos : Vector2 = cell.to_point()
-#	var points : Array = []
-#	var point : Vector2 = Vector2(0, -size) if cell.orientation == 0 else Vector2(-size, 0)
-#	var offset : Vector2 = pos * size
-#	points.append(point + offset)
-#	for i in range(1, 6):
-#		var rad = RAD_60 * i
-#		points.append(point.rotated(rad) + offset)
-#	points.append(point + offset)
-#	return PackedVector2Array(points)
+	_StoreEdge(cell, eid, last_point, point + offset)
 
 func _SetOriginFromPoint(p : Vector2, set_as_cursor : bool = false) -> void:
 	var new_origin : HexCell = HexCell.new(p / cell_size, true, cell_orientation)
