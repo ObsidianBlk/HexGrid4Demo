@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/HexGrid.gd" id="1_5x6s4"]
 [ext_resource type="Script" path="res://Scenes/world.gd" id="1_f161h"]
-[ext_resource type="PackedScene" uid="uid://pi4ccif0y2d6" path="res://UI/Main/main.tscn" id="3_3ca3q"]
+[ext_resource type="PackedScene" uid="uid://boxetr6nqeeoy" path="res://UI/Toolbar/Toolbar.tscn" id="3_xu6gm"]
 
 [node name="World" type="Node2D"]
 script = ExtResource("1_f161h")
@@ -19,6 +19,6 @@ current = true
 
 [node name="UI" type="CanvasLayer" parent="."]
 
-[node name="Main" parent="UI" instance=ExtResource("3_3ca3q")]
+[node name="Toolbar" parent="UI" instance=ExtResource("3_xu6gm")]
 
-[connection signal="operation_requested" from="UI/Main" to="." method="_on_main_operation_requested"]
+[connection signal="operation_requested" from="UI/Toolbar" to="." method="_on_toolbar_operation_requested"]

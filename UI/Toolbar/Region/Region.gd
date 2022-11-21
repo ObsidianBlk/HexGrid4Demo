@@ -9,9 +9,7 @@ signal operation_requested(req)
 # ------------------------------------------------------------------------------
 # Onready Variables
 # ------------------------------------------------------------------------------
-@onready var region_radius : HSlider = $RegionRadius/HSlider
-@onready var region_value_label : Label = $RegionRadius/SLabel/Value
-
+@onready var slider : HSlider = $HSlider
 
 # ------------------------------------------------------------------------------
 # Override Methods
@@ -22,8 +20,12 @@ func _ready() -> void:
 # ------------------------------------------------------------------------------
 # Public Methods
 # ------------------------------------------------------------------------------
-func show_if_named(req_name : String) -> void:
-	if name == req_name:
+func show_if_named(op_name : String) -> void:
+	if op_name == name:
+		operation_requested.emit({
+			"op":"Region",
+			"r": int(slider.value)
+		})
 		visible = true
 	else:
 		visible = false
@@ -31,14 +33,8 @@ func show_if_named(req_name : String) -> void:
 # ------------------------------------------------------------------------------
 # Handler Methods
 # ------------------------------------------------------------------------------
-func _on_RegionRadius_value_changed(value : float):
-	region_value_label.text = "%s"%[int(value)]
-
-func _on_create_pressed():
+func _on_h_slider_value_changed(value : float) -> void:
 	operation_requested.emit({
-		"op": "region_create",
-		"r": int(region_radius.value)
+		"op":"Region",
+		"r": int(value)
 	})
-
-func _on_clear_pressed():
-	operation_requested.emit({"op": "region_remove"})

@@ -1,0 +1,38 @@
+[gd_scene load_steps=2 format=3 uid="uid://xqi2gn1kwr7b"]
+
+[ext_resource type="Script" path="res://UI/Toolbar/Region/Region.gd" id="1_ya3vm"]
+
+[node name="Region" type="HBoxContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+script = ExtResource("1_ya3vm")
+
+[node name="Label" type="Label" parent="."]
+offset_right = 118.0
+offset_bottom = 26.0
+theme_override_colors/font_color = Color(0.662745, 0.662745, 0.662745, 1)
+text = "Region Radius: "
+
+[node name="HSlider" type="HSlider" parent="."]
+custom_minimum_size = Vector2(128, 0)
+offset_left = 122.0
+offset_right = 250.0
+offset_bottom = 26.0
+size_flags_vertical = 1
+min_value = 1.0
+max_value = 15.0
+value = 1.0
+
+[node name="VSeparator" type="VSeparator" parent="."]
+offset_left = 254.0
+offset_right = 258.0
+offset_bottom = 26.0
+
+[node name="Instruction" type="Label" parent="."]
+offset_left = 262.0
+offset_right = 520.0
+offset_bottom = 26.0
+text = "LMB / A to Place, RMB / B to Clear"
+
+[connection signal="value_changed" from="HSlider" to="." method="_on_h_slider_value_changed"]

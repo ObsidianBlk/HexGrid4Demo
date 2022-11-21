@@ -103,8 +103,7 @@ func set_base_grid_range(r : int) -> void:
 func set_enable_base_grid(e : bool) -> void:
 	if enable_base_grid != e:
 		enable_base_grid = e
-		_BuildGridData()
-		#queue_redraw()
+		queue_redraw()
 
 func set_base_grid_color(c : Color) -> void:
 	base_grid_color = c
@@ -126,7 +125,7 @@ func set_enable_cursor(enable : bool) -> void:
 			_AddCursorHighlightRegion()
 		else:
 			remove_highlight_region("cursor")
-		_BuildGridData()
+		queue_redraw()
 
 func set_cursor_color(c : Color) -> void:
 	cursor_color = c

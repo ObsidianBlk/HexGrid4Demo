@@ -1,0 +1,94 @@
+[gd_scene load_steps=3 format=3 uid="uid://boxetr6nqeeoy"]
+
+[ext_resource type="Script" path="res://UI/Toolbar/Toolbar.gd" id="1_ki3f8"]
+[ext_resource type="PackedScene" uid="uid://xqi2gn1kwr7b" path="res://UI/Toolbar/Region/Region.tscn" id="2_5melp"]
+
+[node name="Toolbar" type="MarginContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+script = ExtResource("1_ki3f8")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 2
+offset_right = 1152.0
+offset_bottom = 85.0
+color = Color(0.231373, 0.231373, 0.231373, 0.752941)
+
+[node name="MC" type="MarginContainer" parent="."]
+layout_mode = 2
+offset_right = 1152.0
+offset_bottom = 85.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Rows" type="VBoxContainer" parent="MC"]
+layout_mode = 2
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 1144.0
+offset_bottom = 77.0
+
+[node name="HBC" type="HBoxContainer" parent="MC/Rows"]
+layout_mode = 2
+offset_right = 1136.0
+offset_bottom = 31.0
+
+[node name="Options" type="MenuButton" parent="MC/Rows/HBC"]
+custom_minimum_size = Vector2(192, 0)
+layout_mode = 2
+offset_right = 192.0
+offset_bottom = 31.0
+text = "Select Operation"
+
+[node name="VSeparator" type="VSeparator" parent="MC/Rows/HBC"]
+layout_mode = 2
+offset_left = 196.0
+offset_right = 200.0
+offset_bottom = 31.0
+
+[node name="FullGrid" type="CheckButton" parent="MC/Rows/HBC"]
+layout_mode = 2
+offset_left = 204.0
+offset_right = 363.0
+offset_bottom = 31.0
+button_pressed = true
+text = "Show Full Grid"
+
+[node name="VSeparator2" type="VSeparator" parent="MC/Rows/HBC"]
+layout_mode = 2
+offset_left = 367.0
+offset_right = 371.0
+offset_bottom = 31.0
+
+[node name="Instruct" type="Label" parent="MC/Rows/HBC"]
+layout_mode = 2
+offset_left = 375.0
+offset_top = 2.0
+offset_right = 882.0
+offset_bottom = 28.0
+text = "WASD / Arrow Keys, DPad / Left Thumb Strick for basic Movement"
+
+[node name="HSeparator" type="HSeparator" parent="MC/Rows"]
+layout_mode = 2
+offset_top = 35.0
+offset_right = 1136.0
+offset_bottom = 39.0
+
+[node name="Ops" type="MarginContainer" parent="MC/Rows"]
+layout_mode = 2
+offset_top = 43.0
+offset_right = 1136.0
+offset_bottom = 69.0
+
+[node name="Region" parent="MC/Rows/Ops" instance=ExtResource("2_5melp")]
+layout_mode = 2
+anchors_preset = 0
+anchor_right = 0.0
+offset_right = 1136.0
+offset_bottom = 26.0
+grow_horizontal = 1
+
+[connection signal="toggled" from="MC/Rows/HBC/FullGrid" to="." method="_on_full_grid_toggled"]
