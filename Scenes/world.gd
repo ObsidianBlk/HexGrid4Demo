@@ -108,14 +108,14 @@ func _on_toolbar_operation_requested(req):
 		if req["op"] != operation_mode:
 			_ClearOp()
 			operation_mode = req["op"]
-			match req["op"]:
-				"Region":
-					if "r" in req:
-						region_radius = req["r"]
-				"Line":
-					pass # Technically taken care of already :D
-				_:
-					operation_mode = ""
+		match req["op"]:
+			"Region":
+				if "r" in req:
+					region_radius = req["r"]
+			"Line":
+				pass # Technically taken care of already :D
+			_:
+				operation_mode = ""
 	if "cmd" in req:
 		match req["cmd"]:
 			"full_grid":
