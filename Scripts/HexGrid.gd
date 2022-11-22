@@ -25,6 +25,11 @@ class Edge:
 	func add_owner(cell : HexCell) -> void:
 		if not cell.qrs in owners:
 			owners[cell.qrs] = cell
+	
+	func dist_to_center() -> float:
+		var vmid : Vector2 = to - from
+		vmid = from + (vmid * 0.5)
+		return vmid.distance_to(Vector2.ZERO)
 
 
 # ------------------------------------------------------------------------------
@@ -154,13 +159,18 @@ func _ready() -> void:
 func _draw() -> void:
 	var offset = _grid_origin.to_point() * cell_size
 	for e in _grid_data.edges:
-		var color : Color = base_grid_color
-		var region_name : StringName = _GetEdgeDominantRegion(e)
-		if region_name != &"":
-			color = _highlight_regions[region_name][HR_COLOR]
-			e.draw(self, offset, color)
-		elif enable_base_grid:
-			e.draw(self, offset, color)
+		var alpha : float = 1.0
+		if grid_color_edge_alpha < 1.0:
+			alpha = max(0.0, 1.0 - ((e.dist_to_center() / cell_size) / (base_grid_range * 1.7) ))
+		if alpha > 0.0:
+			var color : Color = base_grid_color
+			var region_name : StringName = _GetEdgeDominantRegion(e)
+			var process = enable_base_grid or region_name != &""
+			if region_name != &"":
+				color = _highlight_regions[region_name][HR_COLOR]
+			if process:
+				color.a = alpha
+				e.draw(self, offset, color)
 	
 	if enable_focus_dot:
 		var target = _target_camera.get_ref()
