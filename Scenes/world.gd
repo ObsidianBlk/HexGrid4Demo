@@ -14,6 +14,8 @@ var _dir_br : Vector2 = Vector2.ZERO
 
 var operation_mode : String = ""
 var region_radius : int = 1
+var line_started : bool = false
+var line_pos : HexCell = HexCell.new()
 
 # --------------------------------------------------------------------------------------------------
 # Onready Variables
@@ -47,12 +49,29 @@ func _unhandled_input(event : InputEvent) -> void:
 				var origin : HexCell = hexgrid.get_origin()
 				if event is InputEventMouseButton:
 					origin.from_point(get_global_mouse_position() / hexgrid.cell_size)
-				if hexgrid.has_highlight_region("Region"):
-					hexgrid.change_highlight_region_cells("Region", origin.get_region(region_radius))
-				else:
-					hexgrid.add_highlight_region("Region", origin.get_region(region_radius), Color.TOMATO)
+				hexgrid.replace_highlight_region("Region", origin.get_region(region_radius), Color.TOMATO, 1)
 			elif event.is_action_pressed("interact_alt"):
-				hexgrid.remove_highlight_region("Region")
+				_ClearOp()
+		"Line":
+			if line_started and event is InputEventMouseMotion:
+				var mouse_cell : HexCell = HexCell.new(null, false, hexgrid.cell_orientation)
+				mouse_cell.from_point(get_global_mouse_position() / hexgrid.cell_size)
+				if not mouse_cell.eq(line_pos):
+					hexgrid.replace_highlight_region("Line", line_pos.get_line_to_cell(mouse_cell), Color.LIGHT_STEEL_BLUE, 1)
+			if event.is_action_pressed("interact"):
+				var cell : HexCell = hexgrid.get_origin()
+				if event is InputEventMouseButton:
+					cell.from_point(get_global_mouse_position() / hexgrid.cell_size)
+				if line_started:
+					hexgrid.remove_highlight_region("Line_Start")
+					hexgrid.replace_highlight_region("Line", line_pos.get_line_to_cell(cell), Color.ORANGE, 1)
+					line_started = false
+				else:
+					line_started = true
+					line_pos = cell
+					hexgrid.add_highlight_region("Line_Start", [cell], Color.ORANGE, 2)
+			elif event.is_action_pressed("interact_alt"):
+				_ClearOp()
 
 func _draw():
 	draw_line(Vector2(-10, 0), Vector2(10, 0), Color.AZURE)
@@ -62,6 +81,23 @@ func _physics_process(delta : float) -> void:
 	var dir : Vector2 = _dir_br - _dir_tl
 	if dir.length_squared() > 0.1:
 		camera_node.global_position += dir * CAMERA_SPEED * delta
+		if operation_mode == "Line" and line_started:
+			var cell : HexCell = hexgrid.get_origin()
+			cell.from_point(camera_node.global_position / hexgrid.cell_size)
+			hexgrid.replace_highlight_region("Line", line_pos.get_line_to_cell(cell), Color.LIGHT_STEEL_BLUE, 1)
+
+
+# --------------------------------------------------------------------------------------------------
+# Private Methods
+# --------------------------------------------------------------------------------------------------
+func _ClearOp() -> void:
+	match operation_mode:
+		"Region":
+			hexgrid.remove_highlight_region("Region")
+		"Line":
+			hexgrid.remove_highlight_region("Line_start")
+			hexgrid.remove_highlight_region("Line")
+			line_started = false
 
 # --------------------------------------------------------------------------------------------------
 # Handler Methods
@@ -69,13 +105,17 @@ func _physics_process(delta : float) -> void:
 
 func _on_toolbar_operation_requested(req):
 	if "op" in req:
-		operation_mode = req["op"]
-		match req["op"]:
-			"Region":
-				if "r" in req:
-					region_radius = req["r"]
-			_:
-				operation_mode = ""
+		if req["op"] != operation_mode:
+			_ClearOp()
+			operation_mode = req["op"]
+			match req["op"]:
+				"Region":
+					if "r" in req:
+						region_radius = req["r"]
+				"Line":
+					pass # Technically taken care of already :D
+				_:
+					operation_mode = ""
 	if "cmd" in req:
 		match req["cmd"]:
 			"full_grid":

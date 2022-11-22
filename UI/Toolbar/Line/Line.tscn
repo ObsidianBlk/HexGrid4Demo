@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://cu0djfjp3uh03"]
+
+[ext_resource type="Script" path="res://UI/Toolbar/Line/Line.gd" id="1_wu604"]
+
+[node name="Line" type="HBoxContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+script = ExtResource("1_wu604")
+
+[node name="Label" type="Label" parent="."]
+offset_right = 49.0
+offset_bottom = 26.0
+theme_override_colors/font_color = Color(0.662745, 0.662745, 0.662745, 1)
+text = "Lines: "
+
+[node name="Label2" type="Label" parent="."]
+offset_left = 53.0
+offset_right = 549.0
+offset_bottom = 26.0
+text = "LMB / A to both start and end a line. RMB / B to clear drawn line."

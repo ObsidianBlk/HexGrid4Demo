@@ -30,11 +30,12 @@ func _on_option_index_pressed(idx : int) -> void:
 	var pop : PopupMenu = options.get_popup()
 	var item_name : String = pop.get_item_text(idx)
 	for op in ops_container.get_children():
-		if op.has_method("show_if_named"):
+		if op.name == item_name and op.has_method("show_if_named"):
 			op.show_if_named(item_name)
 			break
 
 func _on_operation_requested(req : Dictionary) -> void:
+	print(req)
 	operation_requested.emit(req)
 
 func _on_full_grid_toggled(button_pressed : bool) -> void:

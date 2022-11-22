@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://boxetr6nqeeoy"]
+[gd_scene load_steps=4 format=3 uid="uid://boxetr6nqeeoy"]
 
 [ext_resource type="Script" path="res://UI/Toolbar/Toolbar.gd" id="1_ki3f8"]
 [ext_resource type="PackedScene" uid="uid://xqi2gn1kwr7b" path="res://UI/Toolbar/Region/Region.tscn" id="2_5melp"]
+[ext_resource type="PackedScene" uid="uid://cu0djfjp3uh03" path="res://UI/Toolbar/Line/Line.tscn" id="3_a11kl"]
 
 [node name="Toolbar" type="MarginContainer"]
 anchors_preset = 10
@@ -73,6 +74,13 @@ offset_right = 1136.0
 offset_bottom = 69.0
 
 [node name="Region" parent="MC/Rows/Ops" instance=ExtResource("2_5melp")]
+anchors_preset = 0
+anchor_right = 0.0
+offset_right = 1136.0
+offset_bottom = 26.0
+grow_horizontal = 1
+
+[node name="Line" parent="MC/Rows/Ops" instance=ExtResource("3_a11kl")]
 anchors_preset = 0
 anchor_right = 0.0
 offset_right = 1136.0
