@@ -10,7 +10,6 @@ class Edge:
 	var from : Vector2 = Vector2.ZERO
 	var to : Vector2 = Vector2.ZERO
 	var owners : Dictionary = {}
-	var _last_draw_frame : int = -1
 	
 	func _init(a : Vector2, b : Vector2):
 		if a.x > b.x or a.y > b.y:
@@ -26,11 +25,6 @@ class Edge:
 	func add_owner(cell : HexCell) -> void:
 		if not cell.qrs in owners:
 			owners[cell.qrs] = cell
-	
-	func eq(e) -> bool:
-		if from.distance_squared_to(e.from) < 0.1 and to.distance_squared_to(e.to):
-			return true
-		return false
 
 
 # ------------------------------------------------------------------------------

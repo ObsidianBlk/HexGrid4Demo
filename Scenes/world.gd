@@ -67,20 +67,6 @@ func _physics_process(delta : float) -> void:
 # Handler Methods
 # --------------------------------------------------------------------------------------------------
 
-func _on_main_operation_requested(req : Dictionary) -> void:
-	if "op" in req:
-		match req["op"]:
-			"region_create":
-				if "r" in req and typeof(req["r"]) == TYPE_INT and req["r"] > 0:
-					var origin : HexCell = hexgrid.get_origin()
-					if not hexgrid.has_highlight_region("demo_region"):
-						hexgrid.add_highlight_region("demo_region", origin.get_region(req["r"]), Color.TOMATO)
-					else:
-						hexgrid.change_highlight_region_cells("demo_region", origin.get_region(req["r"]))
-			"region_remove":
-				hexgrid.remove_highlight_region("demo_region")
-
-
 func _on_toolbar_operation_requested(req):
 	if "op" in req:
 		operation_mode = req["op"]
