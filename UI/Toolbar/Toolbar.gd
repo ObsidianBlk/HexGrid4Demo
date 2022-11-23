@@ -34,7 +34,6 @@ func _on_option_index_pressed(idx : int) -> void:
 			op.show_if_named(item_name)
 
 func _on_operation_requested(req : Dictionary) -> void:
-	print(req)
 	operation_requested.emit(req)
 
 func _on_full_grid_toggled(button_pressed : bool) -> void:
