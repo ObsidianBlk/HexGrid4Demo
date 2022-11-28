@@ -54,7 +54,8 @@ const RAD_60 : float = deg_to_rad(60.0)
 @export_category("HexGrid")
 @export var cell_orientation : HexCell.ORIENTATION = HexCell.ORIENTATION.Pointy : set = set_cell_orientation
 @export var cell_size : int = 1 : 									set = set_cell_size
-@export_range(0.0, 1.0) var grid_color_edge_alpha : float = 0.1 :	set = set_grid_color_edge_alpha
+@export var grid_alpha_curve : Curve = null
+#@export_range(0.0, 1.0) var grid_color_edge_alpha : float = 0.1 :	set = set_grid_color_edge_alpha
 @export var enable_base_grid : bool = true :						set = set_enable_base_grid
 @export var base_grid_range : int = 20 : 							set = set_base_grid_range
 @export var base_grid_color : Color = Color.AQUAMARINE : 			set = set_base_grid_color
@@ -108,10 +109,10 @@ func set_base_grid_color(c : Color) -> void:
 	base_grid_color = c
 	queue_redraw()
 
-func set_grid_color_edge_alpha(a : float) -> void:
-	if a >= 0.0 and a <= 1.0:
-		grid_color_edge_alpha = a
-		queue_redraw()
+#func set_grid_color_edge_alpha(a : float) -> void:
+#	if a >= 0.0 and a <= 1.0:
+#		grid_color_edge_alpha = a
+#		queue_redraw()
 
 func set_target_camera_path(tp : NodePath) -> void:
 	target_camera_path = tp
@@ -160,8 +161,9 @@ func _draw() -> void:
 	var offset = _grid_origin.to_point() * cell_size
 	for e in _grid_data.edges:
 		var alpha : float = 1.0
-		if grid_color_edge_alpha < 1.0:
-			alpha = max(0.0, 1.0 - ((e.dist_to_center() / cell_size) / (base_grid_range * 1.7) ))
+		if grid_alpha_curve != null:
+			alpha = max(0.0, min(1.0, ((e.dist_to_center() / cell_size) / (base_grid_range * 1.7) )))
+			alpha = grid_alpha_curve.sample(alpha)
 		if alpha > 0.0:
 			var color : Color = base_grid_color
 			var region_name : StringName = _GetEdgeDominantRegion(e)
