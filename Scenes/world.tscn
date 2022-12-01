@@ -1,6 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://bisnsa8jnw043"]
+[gd_scene load_steps=5 format=3 uid="uid://cpfkdlx24lr5y"]
 
-[ext_resource type="Script" path="res://Scripts/HexGrid.gd" id="1_5x6s4"]
+[ext_resource type="Script" path="res://Scripts/HexGridView.gd" id="1_5x6s4"]
 [ext_resource type="Script" path="res://Scenes/world.gd" id="1_f161h"]
 [ext_resource type="PackedScene" uid="uid://boxetr6nqeeoy" path="res://UI/Toolbar/Toolbar.tscn" id="3_xu6gm"]
 
@@ -11,7 +11,7 @@ point_count = 3
 [node name="World" type="Node2D"]
 script = ExtResource("1_f161h")
 
-[node name="HexGrid" type="Node2D" parent="."]
+[node name="HexGridView" type="Node2D" parent="."]
 script = ExtResource("1_5x6s4")
 cell_orientation = 1
 cell_size = 20
