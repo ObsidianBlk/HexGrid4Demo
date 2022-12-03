@@ -191,7 +191,7 @@ func _no_set(_v) -> void:
 func set_qrs(v : Vector3i) -> void:
 	if _IsValid(v):
 		_c = v
-		_UpdateStringName()
+		#_UpdateStringName()
 
 func get_qrs() -> Vector3i:
 	return _c
@@ -202,11 +202,10 @@ func set_qr(v : Vector2i) -> void:
 func get_qr() -> Vector2i:
 	return Vector2i(_c.x, _c.z)
 
-func set_orientation(o : int) -> void:
-	if ORIENTATION.values().find(o) >= 0:
-		if orientation != o:
-			orientation = o
-			_UpdateStringName()
+func set_orientation(o : ORIENTATION) -> void:
+	if orientation != o:
+		orientation = o
+		#_UpdateStringName()
 
 func get_q() -> int:
 	return _c.x
@@ -229,26 +228,31 @@ static func Flat(value = null, point_is_spacial : bool = false) -> HexCell:
 # -------------------------------------------------------------------------
 # Override Methods
 # -------------------------------------------------------------------------
-func _init(value = null, point_is_spacial : bool = false, orien : int = -1) -> void:
+func _init(value = null, point_is_spacial : bool = false, orien : ORIENTATION = ORIENTATION.Pointy) -> void:
 	value = value # This is a hack to prevent the analyzer from catching an error... grrr
-	if ORIENTATION.values().find(orien) >= 0:
-		orientation = orien
+	orientation = orien
 	
-	if typeof(value) == TYPE_OBJECT and value.has_method("is_valid") and value.is_valid():
-		set_qrs(value.qrs)
-		orientation = value.orientation
-	elif typeof(value) == TYPE_VECTOR3 or typeof(value) == TYPE_VECTOR3I:
-		set_qrs(_RoundVec(Vector3i(value)))
-	elif typeof(value) == TYPE_VECTOR2:
-		if point_is_spacial:
-			from_point(value)
-		else:
+	match typeof(value):
+		TYPE_OBJECT:
+			if value.has_method("is_valid") and value.is_valid():
+				set_qrs(value.qrs)
+				orientation = value.orientation
+		TYPE_VECTOR3:
+			set_qrs(_RoundVec(Vector3i(value)))
+		TYPE_VECTOR3I:
+			if not _IsValid(value):
+				value = _RoundVec(value)
+			set_qrs(value)
+		TYPE_VECTOR2:
+			if point_is_spacial:
+				from_point(value)
+			else:
+				set_qr(value)
+		TYPE_VECTOR2I:
 			set_qr(value)
-	elif typeof(value) == TYPE_VECTOR2I:
-		set_qr(value)
-	else:
-		# By default, C is origin, which is valid, so...
-		_UpdateStringName()
+		_:
+			pass
+			#_UpdateStringName()
 
 # -------------------------------------------------------------------------
 # Private Methods
@@ -325,8 +329,8 @@ func swap_orientation() -> void:
 func eq(v, point_is_spacial : bool = false) -> bool:
 	match typeof(v):
 		TYPE_OBJECT:
-			if v.has_method("get_string_name"):
-				return _sname == v.get_string_name()
+			if v.has_method("_ReflectQRSVec"):
+				return _c == v.qrs and orientation == v.orientation
 		TYPE_VECTOR3, TYPE_VECTOR3I:
 			return _c == Vector3i(v)
 		TYPE_VECTOR2, TYPE_VECTOR2I:
@@ -337,8 +341,8 @@ func eq(v, point_is_spacial : bool = false) -> bool:
 
 func distance_to(cell : HexCell) -> float:
 	if is_valid() and cell != null and cell.is_valid():
-		var subc : Vector3 = Vector3(_c) - Vector3(cell.qrs)
-		return (abs(subc.x) + abs(subc.y) + abs(subc.z)) * 0.5
+		var subc : Vector3 = Vector3(_c - cell.qrs).abs()
+		return (subc.x + subc.y + subc.z) * 0.5
 	return 0.0
 
 func to_point() -> Vector2:
@@ -468,8 +472,12 @@ func get_line_to_cell(cell : HexCell) -> Array:
 			res.append(ncell)
 	return res
 
+func get_line_to_qrs(qrs : Vector3i) -> Array:
+	var ecell = get_script().new(qrs, false, orientation)
+	return get_line_to_cell(ecell)
+
 func get_line_to_point(point : Vector2) -> Array:
-	var ecell = get_script().new(point, true)
+	var ecell = get_script().new(point, true, orientation)
 	return get_line_to_cell(ecell)
 
 func get_facing_edge(cell : HexCell) -> int:
@@ -484,6 +492,7 @@ func as_string() -> String:
 	return "Hex(%s, %s, %s):%s"%[_c.x, _c.z, _c.y, "P" if orientation == ORIENTATION.Pointy else "F"]
 
 func get_string_name() -> StringName:
+	_UpdateStringName()
 	return _sname
 
 

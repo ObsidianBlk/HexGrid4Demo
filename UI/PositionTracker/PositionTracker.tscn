@@ -1,0 +1,72 @@
+[gd_scene load_steps=2 format=3 uid="uid://dlb2lmysbergq"]
+
+[ext_resource type="Script" path="res://UI/PositionTracker/PositionTracker.gd" id="1_1jme1"]
+
+[node name="PositionTracker" type="MarginContainer"]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("1_1jme1")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 1152.0
+offset_bottom = 42.0
+color = Color(0.180005, 0.180005, 0.180005, 0.768627)
+
+[node name="MC" type="MarginContainer" parent="."]
+offset_right = 1152.0
+offset_bottom = 42.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="HBC" type="HBoxContainer" parent="MC"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 1144.0
+offset_bottom = 34.0
+
+[node name="QRS" type="HBoxContainer" parent="MC/HBC"]
+offset_right = 129.0
+offset_bottom = 26.0
+
+[node name="Label" type="Label" parent="MC/HBC/QRS"]
+offset_right = 89.0
+offset_bottom = 26.0
+theme_override_colors/font_color = Color(0.662745, 0.662745, 0.662745, 1)
+text = "Hex (Q,R,S):"
+
+[node name="Value" type="Label" parent="MC/HBC/QRS"]
+offset_left = 93.0
+offset_right = 129.0
+offset_bottom = 26.0
+text = "0,0,0"
+
+[node name="Control" type="Control" parent="MC/HBC"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 133.0
+offset_right = 1025.0
+offset_bottom = 26.0
+size_flags_horizontal = 3
+
+[node name="Pixel" type="HBoxContainer" parent="MC/HBC"]
+offset_left = 1029.0
+offset_right = 1136.0
+offset_bottom = 26.0
+
+[node name="Label" type="Label" parent="MC/HBC/Pixel"]
+offset_right = 80.0
+offset_bottom = 26.0
+theme_override_colors/font_color = Color(0.662745, 0.662745, 0.662745, 1)
+text = "Pixel (X,Y):"
+
+[node name="Value" type="Label" parent="MC/HBC/Pixel"]
+offset_left = 84.0
+offset_right = 107.0
+offset_bottom = 26.0
+text = "0,0"

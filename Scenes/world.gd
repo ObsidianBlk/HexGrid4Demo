@@ -19,21 +19,32 @@ var region_radius : int = 1
 var line_started : bool = false
 var line_pos : HexCell = HexCell.new()
 
+var hexgrid : HexGrid = null
+
 # --------------------------------------------------------------------------------------------------
 # Onready Variables
 # --------------------------------------------------------------------------------------------------
 @onready var camera_node : Camera2D = $Camera2D
-@onready var hexgrid : HexGrid = $HexGrid
+@onready var hexgridview : HexGridView = $HexGridView
 @onready var toolbar : Control = $UI/Toolbar
+@onready var pos_tracker : Control = $UI/PositionTracker
 
 # --------------------------------------------------------------------------------------------------
 # Override Methods
 # --------------------------------------------------------------------------------------------------
 func _ready() -> void:
-	var cell : HexCell = HexCell.Pointy()
-	print("Pointy: ", cell.as_string())
-	var cell2 : HexCell = HexCell.Flat()
-	print("Flat: ", cell2.as_string())
+	hexgridview.connect("origin_changed", _on_origin_changed)
+	hexgrid = HexGrid.new()
+	hexgrid.orientation = HexCell.ORIENTATION.Flat
+	#hexgrid.grid_boundry = HexGrid.BOUND_TYPE.Radial
+	#hexgrid.bound_radius = 8
+	hexgrid.grid_boundry = HexGrid.BOUND_TYPE.Rect
+	hexgrid.bound_rect = Rect2(-20, -20, 40, 40)
+	var origin : HexCell = HexCell.new(Vector3i(-20,40,-20), false, hexgrid.orientation)
+	var celllist : Array = origin.get_line_to_qrs(Vector3i(-20,0,20))
+	#celllist.append_array(origin.get_line_to_qrs(Vector3i(20,0,-20)))
+	hexgrid.add_region("boundry", celllist, Color.LIGHT_PINK)
+	hexgridview.hex_grid = hexgrid
 
 
 func _unhandled_input(event : InputEvent) -> void:
@@ -55,25 +66,25 @@ func _unhandled_input(event : InputEvent) -> void:
 	match operation_mode:
 		"Region":
 			if event.is_action_pressed("interact"):
-				var origin : HexCell = hexgrid.get_origin()
+				var origin : HexCell = hexgridview.get_origin()
 				if event is InputEventMouseButton:
 					origin.from_point(get_global_mouse_position() / hexgrid.cell_size)
-				hexgrid.replace_highlight_region("Region", origin.get_region(region_radius), Color.TOMATO, 1)
+				hexgrid.replace_region("Region", origin.get_region(region_radius), Color.TOMATO, 1)
 			elif event.is_action_pressed("interact_alt"):
 				_ClearOp()
 		"Wedge":
-			var origin : HexCell = hexgrid.get_origin()
+			var origin : HexCell = hexgridview.get_origin()
 			if event.is_action_pressed("interact"):
 				wedge_visible = true
-				hexgrid.replace_highlight_region("Wedge_%s"%[wedge_edge + 1], origin.get_wedge_region(wedge_edge, region_radius), Color.WHEAT)
+				hexgrid.replace_region("Wedge_%s"%[wedge_edge + 1], origin.get_wedge_region(wedge_edge, region_radius), Color.WHEAT)
 			elif event.is_action_pressed("cycle_up"):
-				hexgrid.remove_highlight_region("Wedge_%s"%[wedge_edge + 1])
+				hexgrid.remove_region("Wedge_%s"%[wedge_edge + 1])
 				wedge_edge = (wedge_edge + 1) % 6
-				hexgrid.add_highlight_region("Wedge_%s"%[wedge_edge + 1], origin.get_wedge_region(wedge_edge, region_radius), Color.WHEAT)
+				hexgrid.add_region("Wedge_%s"%[wedge_edge + 1], origin.get_wedge_region(wedge_edge, region_radius), Color.WHEAT)
 			elif event.is_action_pressed("cycle_down"):
-				hexgrid.remove_highlight_region("Wedge_%s"%[wedge_edge + 1])
+				hexgrid.remove_region("Wedge_%s"%[wedge_edge + 1])
 				wedge_edge = 5 if wedge_edge == 0 else wedge_edge - 1
-				hexgrid.add_highlight_region("Wedge_%s"%[wedge_edge + 1], origin.get_wedge_region(wedge_edge, region_radius), Color.WHEAT)
+				hexgrid.add_region("Wedge_%s"%[wedge_edge + 1], origin.get_wedge_region(wedge_edge, region_radius), Color.WHEAT)
 			elif event.is_action_pressed("interact_alt"):
 				wedge_visible = false
 				_ClearOp()
@@ -94,27 +105,27 @@ func _unhandled_input(event : InputEvent) -> void:
 						edge = 5
 				if edge >= 0 and (not wedge_visible or edge != wedge_edge):
 					if event.pressed:
-						hexgrid.replace_highlight_region("Wedge_%s"%[edge + 1], origin.get_wedge_region(edge, region_radius), Color.WHEAT)
+						hexgrid.replace_region("Wedge_%s"%[edge + 1], origin.get_wedge_region(edge, region_radius), Color.WHEAT)
 					else:
-						hexgrid.remove_highlight_region("Wedge_%s"%[edge + 1])
+						hexgrid.remove_region("Wedge_%s"%[edge + 1])
 		"Line":
 			if line_started and event is InputEventMouseMotion:
-				var mouse_cell : HexCell = HexCell.new(null, false, hexgrid.cell_orientation)
-				mouse_cell.from_point(get_global_mouse_position() / hexgrid.cell_size)
+				var mouse_cell : HexCell = HexCell.new(null, false, hexgrid.orientation)
+				mouse_cell.from_point(get_global_mouse_position() / hexgridview.cell_size)
 				if not mouse_cell.eq(line_pos):
-					hexgrid.replace_highlight_region("Line", line_pos.get_line_to_cell(mouse_cell), Color.LIGHT_STEEL_BLUE, 1)
+					hexgrid.replace_region("Line", line_pos.get_line_to_cell(mouse_cell), Color.LIGHT_STEEL_BLUE, 1)
 			if event.is_action_pressed("interact"):
-				var cell : HexCell = hexgrid.get_origin()
+				var cell : HexCell = hexgridview.get_origin()
 				if event is InputEventMouseButton:
-					cell.from_point(get_global_mouse_position() / hexgrid.cell_size)
+					cell.from_point(get_global_mouse_position() / hexgridview.cell_size)
 				if line_started:
-					hexgrid.remove_highlight_region("Line_Start")
-					hexgrid.replace_highlight_region("Line", line_pos.get_line_to_cell(cell), Color.ORANGE, 1)
+					hexgrid.remove_region("Line_Start")
+					hexgrid.replace_region("Line", line_pos.get_line_to_cell(cell), Color.ORANGE, 1)
 					line_started = false
 				else:
 					line_started = true
 					line_pos = cell
-					hexgrid.add_highlight_region("Line_Start", [cell], Color.ORANGE, 2)
+					hexgrid.add_region("Line_Start", [cell], Color.ORANGE, 2)
 			elif event.is_action_pressed("interact_alt"):
 				_ClearOp()
 
@@ -127,9 +138,9 @@ func _physics_process(delta : float) -> void:
 	if dir.length_squared() > 0.1:
 		camera_node.global_position += dir * CAMERA_SPEED * delta
 		if operation_mode == "Line" and line_started:
-			var cell : HexCell = hexgrid.get_origin()
-			cell.from_point(camera_node.global_position / hexgrid.cell_size)
-			hexgrid.replace_highlight_region("Line", line_pos.get_line_to_cell(cell), Color.LIGHT_STEEL_BLUE, 1)
+			var cell : HexCell = hexgridview.get_origin()
+			cell.from_point(camera_node.global_position / hexgridview.cell_size)
+			hexgrid.replace_region("Line", line_pos.get_line_to_cell(cell), Color.LIGHT_STEEL_BLUE, 1)
 		if operation_mode == "Wedge":
 			_WedgeAtOrigin()
 
@@ -139,33 +150,35 @@ func _physics_process(delta : float) -> void:
 # --------------------------------------------------------------------------------------------------
 func _WedgeAtOrigin() -> void:
 	if wedge_visible:
-		var origin : HexCell = hexgrid.get_origin()
+		var origin : HexCell = hexgridview.get_origin()
 		for i in range(6):
-			if hexgrid.has_highlight_region("Wedge_%s"%[i+1]):
-				hexgrid.replace_highlight_region("Wedge_%s"%[i + 1], origin.get_wedge_region(i, region_radius), Color.WHEAT)
+			if hexgrid.has_region("Wedge_%s"%[i+1]):
+				hexgrid.replace_region("Wedge_%s"%[i + 1], origin.get_wedge_region(i, region_radius), Color.WHEAT)
 
 func _ClearOp() -> void:
 	match operation_mode:
 		"Region":
-			hexgrid.remove_highlight_region("Region")
+			hexgrid.remove_region("Region")
 		"Wedge":
-			hexgrid.remove_highlight_region("Wedge_1")
-			hexgrid.remove_highlight_region("Wedge_2")
-			hexgrid.remove_highlight_region("Wedge_3")
-			hexgrid.remove_highlight_region("Wedge_4")
-			hexgrid.remove_highlight_region("Wedge_5")
-			hexgrid.remove_highlight_region("Wedge_6")
+			hexgrid.remove_region("Wedge_1")
+			hexgrid.remove_region("Wedge_2")
+			hexgrid.remove_region("Wedge_3")
+			hexgrid.remove_region("Wedge_4")
+			hexgrid.remove_region("Wedge_5")
+			hexgrid.remove_region("Wedge_6")
 			wedge_visible = false
 		"Line":
-			hexgrid.remove_highlight_region("Line_start")
-			hexgrid.remove_highlight_region("Line")
+			hexgrid.remove_region("Line_start")
+			hexgrid.remove_region("Line")
 			line_started = false
 
 # --------------------------------------------------------------------------------------------------
 # Handler Methods
 # --------------------------------------------------------------------------------------------------
+func _on_origin_changed(origin : HexCell) -> void:
+	pos_tracker.set_position_hex(origin)
 
-func _on_toolbar_operation_requested(req):
+func _on_toolbar_operation_requested(req) -> void:
 	if "op" in req:
 		if req["op"] != operation_mode:
 			_ClearOp()
