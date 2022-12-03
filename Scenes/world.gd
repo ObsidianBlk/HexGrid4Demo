@@ -38,12 +38,12 @@ func _ready() -> void:
 	hexgrid.orientation = HexCell.ORIENTATION.Flat
 	#hexgrid.grid_boundry = HexGrid.BOUND_TYPE.Radial
 	#hexgrid.bound_radius = 8
-	hexgrid.grid_boundry = HexGrid.BOUND_TYPE.Rect
-	hexgrid.bound_rect = Rect2(-20, -20, 40, 40)
-	var origin : HexCell = HexCell.new(Vector3i(-20,40,-20), false, hexgrid.orientation)
-	var celllist : Array = origin.get_line_to_qrs(Vector3i(-20,0,20))
+	#hexgrid.grid_boundry = HexGrid.BOUND_TYPE.Rect
+	#hexgrid.bound_rect = Rect2(-20, -20, 40, 40)
+	#var origin : HexCell = HexCell.new(Vector3i(-20,40,-20), false, hexgrid.orientation)
+	#var celllist : Array = origin.get_line_to_qrs(Vector3i(-20,0,20))
 	#celllist.append_array(origin.get_line_to_qrs(Vector3i(20,0,-20)))
-	hexgrid.add_region("boundry", celllist, Color.LIGHT_PINK)
+	#hexgrid.add_region("boundry", celllist, Color.LIGHT_PINK)
 	hexgridview.hex_grid = hexgrid
 
 
