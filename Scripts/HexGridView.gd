@@ -275,19 +275,19 @@ func _GetEdgeDominantRegion(e : Edge) -> StringName:
 	return &""
 
 
-func _GetCellPriority(qrs : Vector3i) -> int:
-	if qrs in _active_cells:
-		var priorities : Array = _active_cells[qrs].keys()
-		priorities.sort()
-		return priorities[priorities.size() - 1]
-	return -1
-
-
-func _GetCellActiveRegion(cell : HexCell) -> StringName:
-	var priority = _GetCellPriority(cell.qrs)
-	if priority >= 0:
-		return _active_cells[cell.qrs][priority][0]
-	return &""
+#func _GetCellPriority(qrs : Vector3i) -> int:
+#	if qrs in _active_cells:
+#		var priorities : Array = _active_cells[qrs].keys()
+#		priorities.sort()
+#		return priorities[priorities.size() - 1]
+#	return -1
+#
+#
+#func _GetCellActiveRegion(cell : HexCell) -> StringName:
+#	var priority = _GetCellPriority(cell.qrs)
+#	if priority >= 0:
+#		return _active_cells[cell.qrs][priority][0]
+#	return &""
 
 
 func _AddCellToGrid(cell : HexCell) -> void:
@@ -343,11 +343,12 @@ func _SetOriginFromPoint(p : Vector2, set_as_cursor : bool = false) -> void:
 	if hex_grid == null:
 		return
 		
-	var new_origin : HexCell = HexCell.new(p / cell_size, true, hex_grid.orientation)
-	if not new_origin.eq(_grid_origin):
-		_grid_origin = new_origin
+	#var new_origin : HexCell = HexCell.new(p / cell_size, true, hex_grid.orientation)
+	_scratch_cell.from_point(p / cell_size)
+	if not _scratch_cell.eq(_grid_origin):
+		_grid_origin.qrs = _scratch_cell.qrs
 		if set_as_cursor and enable_cursor:
-			hex_grid.change_region_cells("cursor", [new_origin])
+			hex_grid.change_region_cells("cursor", [_grid_origin.clone()])
 		origin_changed.emit(_grid_origin.clone())
 	queue_redraw()
 
@@ -359,7 +360,7 @@ func set_origin_cell(origin : HexCell) -> void:
 		return # Only update the origin this way if we have no target camera.
 	
 	if origin.is_valid() and not origin.eq(_grid_origin):
-		_grid_origin = origin
+		_grid_origin.qrs = origin.qrs
 		if hex_grid != null:
 			if _grid_origin.orientation != hex_grid.orientation:
 				_grid_origin.orientation = hex_grid.orientation
@@ -369,7 +370,8 @@ func set_origin_cell(origin : HexCell) -> void:
 func set_origin_from_point(p : Vector2) -> void:
 	if _target_camera.get_ref() != null:
 		return # Only update the origin this way if we have no target camera.
-	set_origin_cell(HexCell.new(p / cell_size, true, _grid_origin.orientation))
+	_scratch_cell.from_point(p / cell_size)
+	set_origin_cell(_scratch_cell)
 
 func get_origin() -> HexCell:
 	return _grid_origin.clone()
@@ -377,6 +379,8 @@ func get_origin() -> HexCell:
 # ------------------------------------------------------------------------------
 # Handler Methods
 # ------------------------------------------------------------------------------
+# Yes... I realize how repeatative these handlers are. This was whipped quick. May go back and
+# optimize all of this later!
 func _on_orientation_changed(new_orientation : HexCell.ORIENTATION) -> void:
 	queue_redraw()
 
