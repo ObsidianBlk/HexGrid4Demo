@@ -226,28 +226,28 @@ func _UpdateCellOrientation() -> void:
 			_BuildGridData()
 
 
-func _ActivateCellRegion(cell : HexCell, region_name : StringName, priority : int) -> void:
-	if not region_name in _highlight_regions:
-		return
-	if not cell.qrs in _active_cells:
-		_active_cells[cell.qrs] = {}
-	if not priority in _active_cells[cell.qrs]:
-		_active_cells[cell.qrs][priority] = []
-	_active_cells[cell.qrs][priority].append(region_name)
-
-func _DeactivateCellRegion(cell : HexCell, region_name : StringName, priority : int) -> void:
-	if not region_name in _highlight_regions:
-		return
-	if not cell.qrs in _active_cells:
-		return
-	if priority in _active_cells[cell.qrs]:
-		var idx : int = _active_cells[cell.qrs][priority].find(region_name)
-		if idx >= 0:
-			_active_cells[cell.qrs][priority].remove_at(idx)
-			if _active_cells[cell.qrs][priority].size() <= 0:
-				_active_cells[cell.qrs].erase(priority)
-				if _active_cells[cell.qrs].size() <= 0:
-					_active_cells.erase(cell.qrs)
+#func _ActivateCellRegion(cell : HexCell, region_name : StringName, priority : int) -> void:
+#	if not region_name in _highlight_regions:
+#		return
+#	if not cell.qrs in _active_cells:
+#		_active_cells[cell.qrs] = {}
+#	if not priority in _active_cells[cell.qrs]:
+#		_active_cells[cell.qrs][priority] = []
+#	_active_cells[cell.qrs][priority].append(region_name)
+#
+#func _DeactivateCellRegion(cell : HexCell, region_name : StringName, priority : int) -> void:
+#	if not region_name in _highlight_regions:
+#		return
+#	if not cell.qrs in _active_cells:
+#		return
+#	if priority in _active_cells[cell.qrs]:
+#		var idx : int = _active_cells[cell.qrs][priority].find(region_name)
+#		if idx >= 0:
+#			_active_cells[cell.qrs][priority].remove_at(idx)
+#			if _active_cells[cell.qrs][priority].size() <= 0:
+#				_active_cells[cell.qrs].erase(priority)
+#				if _active_cells[cell.qrs].size() <= 0:
+#					_active_cells.erase(cell.qrs)
 
 func _IsEdgeVisible(e : Edge) -> bool:
 	var owners : Array = e.owners.values()
@@ -382,6 +382,7 @@ func get_origin() -> HexCell:
 # Yes... I realize how repeatative these handlers are. This was whipped quick. May go back and
 # optimize all of this later!
 func _on_orientation_changed(new_orientation : HexCell.ORIENTATION) -> void:
+	_UpdateCellOrientation()
 	queue_redraw()
 
 func _on_region_added(region_name : StringName) -> void:
