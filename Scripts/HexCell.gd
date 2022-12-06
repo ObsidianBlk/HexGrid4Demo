@@ -470,6 +470,7 @@ func get_line_to_cell(cell : HexCell) -> Array:
 		for i in range(0, dist):
 			var ncell = _CellLerp(self, cell, i/dist)
 			res.append(ncell)
+		res.append(cell)
 	return res
 
 func get_line_to_qrs(qrs : Vector3i) -> Array:
