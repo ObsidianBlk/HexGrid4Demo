@@ -132,17 +132,21 @@ func _unhandled_input(event : InputEvent) -> void:
 func _draw():
 	draw_line(Vector2(-10, 0), Vector2(10, 0), Color.AZURE)
 	draw_line(Vector2(0, -10), Vector2(0, 10), Color.AZURE)
+	
+	if camera_node:
+		draw_circle(camera_node.global_position, 2.0, Color.RED)
 
 func _physics_process(delta : float) -> void:
 	var dir : Vector2 = _dir_br - _dir_tl
 	if dir.length_squared() > 0.1:
 		camera_node.global_position += dir * CAMERA_SPEED * delta
+		hexgridview.set_origin_from_point(camera_node.global_position)
+		var cell : HexCell = hexgridview.get_origin()
 		if operation_mode == "Line" and line_started:
-			var cell : HexCell = hexgridview.get_origin()
-			cell.from_point(camera_node.global_position / hexgridview.cell_size)
 			hexgrid.replace_region("Line", line_pos.get_line_to_cell(cell), Color.LIGHT_STEEL_BLUE, 1)
 		if operation_mode == "Wedge":
 			_WedgeAtOrigin()
+		queue_redraw()
 
 
 # --------------------------------------------------------------------------------------------------

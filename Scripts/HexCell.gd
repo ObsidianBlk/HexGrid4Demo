@@ -473,8 +473,8 @@ func get_line_to_cell(cell : HexCell) -> Array:
 		res.append(cell)
 	return res
 
-func get_line_to_qrs(qrs : Vector3i) -> Array:
-	var ecell = get_script().new(qrs, false, orientation)
+func get_line_to_qrs(dst_qrs : Vector3i) -> Array:
+	var ecell = get_script().new(dst_qrs, false, orientation)
 	return get_line_to_cell(ecell)
 
 func get_line_to_point(point : Vector2) -> Array:

@@ -17,7 +17,6 @@ script = ExtResource("1_5x6s4")
 cell_size = 20
 grid_alpha_curve = SubResource("Curve_tv5gi")
 base_grid_range = 13
-target_camera_path = NodePath("../Camera2D")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
